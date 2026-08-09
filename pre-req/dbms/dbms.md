@@ -71,7 +71,9 @@ Operations on DBMS
 		M - N many to many : physicians ,patients
 - Leetcode :  db design : test cases stored in s3 (they are huge) , details of problem statement : markdown format
 
-DBMS - 5 what db to choose
+## DBMS - 5 what db to choose
+
+### Concepts
 	- Based on team preference pick db 
 	-  one system can use more than one db's as we may need rbdms for transactions and for non structured we use mongodb
 	- graph like structure :  neon4j,infinity graph
