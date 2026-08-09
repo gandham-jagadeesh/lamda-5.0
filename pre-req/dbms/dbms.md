@@ -74,16 +74,16 @@ Operations on DBMS
 ## DBMS - 5 what db to choose
 
 ### Concepts
-	- Based on team preference pick db 
-	-  one system can use more than one db's as we may need rbdms for transactions and for non structured we use mongodb
-	- graph like structure :  neon4j,infinity graph
-	-  unstructured data schema less  : document based : mongodb
-	-  want to store key, value based or caching  : Redis (caching), DynamoDB
-	- geospatial data (uber) : Redis geo , spatial db , firebase geo spatial db
-	- column based data : Cassandra. 
-	-  if you are having relation based  , structured : use Rdbms
-	-  transactions (payment , bookings ) : use Rdbms
-	-  files , videos ,audios  :  blob storages  : s3
+- Based on team preference pick db 
+-  one system can use more than one db's as we may need rbdms for transactions and for non structured we use mongodb
+- graph like structure :  neon4j,infinity graph
+-  unstructured data schema less  : document based : mongodb
+-  want to store key, value based or caching  : Redis (caching), DynamoDB
+- geospatial data (uber) : Redis geo , spatial db , firebase geo spatial db
+- column based data : Cassandra. 
+-  if you are having relation based  , structured : use Rdbms
+-  transactions (payment , bookings ) : use Rdbms
+-  files , videos ,audios  :  blob storages  : s3
 
 
 
@@ -95,7 +95,7 @@ Operations on DBMS
 ## commits
 - If the every steps executes then we commit or we rollback 
 The query syntax 
-- ```mysql
+ ```mysql
    start transaction;
 	   ....
 	   ....
@@ -105,6 +105,7 @@ The query syntax
 ## Demo in Transactions
 
 - Account table example  discussed in the video
+- ex: two tables credit and debit amount among them
 
 ## ACID 
 
@@ -120,3 +121,40 @@ The query syntax
 ## Isolation - 2 :
 - Durability 
 - if a transaction is completed then our db ensures that we always gonna be like permanently stored to disk even if in terms of crash.
+
+
+## Transactions Deep Dive
+
+## Concepts
+
+### isolation
+- what problems we face if we don't handle concurrency i.e. parallel transactions
+- lost update : when two transactions are executing parallelly both doing update we gonna lose one transactions value 
+- dirty read : if one of transactions read a row when other transaction modify  the value then we gonna have uncommitted value or inconsistent data
+-  non repeatable reads : if transaction's  have a select query twice each given different results  due to  second transaction modify the value we gonna have different values 
+- phantom read :  with in the transaction if we have n+1 or n-1 rows even though if we are executing same rows each we are having different rows sizes due to other transaction inserted or deleted more rows then we call that as phantom read
+
+### solution:
+- default isolation : if your queries are only read based just then go default  isolation level ex: analytics based queries  
+- read commited isolation level : Enable this isolation we solve dirty read problem but other repetable read , phantom read problem still exists  
+- repetable reads : enable this solves dirty read + non repetable reads problem but phantom read problem exists
+- serializable : it looks like we are  executing only one transaction at a time so   full eliminate conucurrency problem but (high resource intensive )
+
+- there might be many level isolation levels author discussed the mysql speific
+
+#### less resource intensive 
+- we can use combination of these above to avoid serialiazble level but still be perfomant
+- pessimistic locking + read commited (locks ) : dead lock can occur 
+- optimistic locking (versioning ) : contention can occur
+- distrubuted cache lock : instead of going through db levels we can stop at backend level 
+
+## cool idea : 
+- booking app : instead of having these mechanisams applied at db level apply at earliest level 
+- ex: when ever use booking a ticket we have to fill and then go to payment level 
+- so apply at these tickets fill details so either if one person already filling the details of a movie ticket or room booking show to other its try again instead of failure at payment level
+- it will be good user expereice instead of payment refund
+
+- Future : learn how database able to implement this in future (database internals)
+## Articles
+
+- [isolation ](https://en.wikipedia.org/wiki/Isolation_(database_systems)) - need to study
