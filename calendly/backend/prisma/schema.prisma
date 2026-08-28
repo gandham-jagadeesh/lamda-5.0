@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model user {
+  id         Int      @id @default(autoincrement())
+  first_name String
+  last_name  String
+  profile_pic String?
+  email      String   @unique
+  password   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  preference   preference[]
+  user_booking bookings[]     @relation("user")
+  host_booking bookings[]     @relation("host")
+  restrictions restrictions[]
+  slot slot[]
+}
+
+enum DAY {
+  MON
+  TUE
+  WED
+  THR
+  FRI
+  SAT
+  SUN
+}
+
+model preference {
+  id                Int      @id @default(autoincrement())
+  day               DAY
+  start_time        DateTime
+  end_time          DateTime
+  duration_min      Int
+  buffer_before_min Int
+  recurring         Boolean
+  user_id           Int
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  user user   @relation(fields: [user_id], references: [id] ,onDelete:Cascade)
+  slot slot[]
+}
+
+model slot {
+  id            Int       @id @default(autoincrement())
+  date          DateTime
+  start_time    DateTime
+  end_time      DateTime
+  preference_id Int
+  booking       bookings?
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  user_id       Int
+
+  user user @relation(fields:[user_id],references:[id])
+  preference preference @relation(fields: [preference_id], references: [id])
+}
+
+enum BOOKING_STATUS {
+  CANCEL
+  BOOKED
+  RESCHEDULED
+}
+
+model bookings {
+  id          Int      @id @default(autoincrement())
+  user_id     Int      @map("user_id")
+  host_id     Int      @map("host_id")
+  slot_id     Int      @unique
+  description String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  status BOOKING_STATUS @default(BOOKED)
+  user   user           @relation("user", fields: [user_id], references: [id])
+  host   user           @relation("host", fields: [host_id], references: [id])
+  slot   slot           @relation(fields: [slot_id], references: [id])
+
+ }
+
+enum TYPE {
+  HALF
+  FULL
+}
+
+model restrictions {
+  id         Int       @id @default(autoincrement())
+  day        DAY
+  date       DateTime?
+  type       TYPE
+  start_time DateTime
+  end_time   DateTime
+  recurring  Boolean
+  user_id    Int
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  user       user      @relation(fields: [user_id], references: [id])
+}
