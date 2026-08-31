@@ -12,7 +12,7 @@ create table users(
 
 create table problems(
     id int auto_increment primary key,
-    problem_id int unique, 
+    problem_id int unique,
     description varchar(5000) not null
 );
 
@@ -40,11 +40,11 @@ create table tags(
 
 create table submissions(
     id int auto_increment primary key,
-    problem_id int not null, 
+    problem_id int not null,
     user_id int not null,
     solution varchar(5000) not null,
     lang_id  int  not null,
-    status enum('pending','success','failure','run time error','time limit exceeded','memory limit execeeded') not null, 
+    status enum('pending','success','failure','run time error','time limit exceeded','memory limit execeeded') not null,
     constraint fk_key_prob_id foreign key(problem_id) references problems(id),
     constraint fk_key_user_id foreign key(user_id) references users(id),
     constraint fk_key_lang_id foreign key(lang_id) references language(id)
