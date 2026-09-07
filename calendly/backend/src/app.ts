@@ -1,6 +1,7 @@
 import express from "express";
 import { Express } from "express";
 import { errorHandler } from "./middlewares/error.handler.js";
+import { noRouteHandler } from "./middlewares/path.handler.js";
 import { userRouter } from "./routers/user.router.js";
 const app: Express = express();
 
@@ -15,7 +16,7 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/v1/user", userRouter);
 
-// app.use(noRouteHandler);
+app.use(noRouteHandler);
 app.use(errorHandler);
 
 export default  app;

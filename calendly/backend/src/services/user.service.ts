@@ -1,7 +1,6 @@
 import { createUserDto, UpdateUserDto } from "../dtos/user.dto.js";
 import {  getAll, getById , getByEmail, create, update, remove } from "../repository/user.repository.js"
 import { conflict, notFound } from "../utils/api-error.js";
-
 // @TODO : send only speific user field : remove password field
 export async function findById(id: number) {
   const user = await getById(id);
