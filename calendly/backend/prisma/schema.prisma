@@ -29,7 +29,7 @@ model eventType {
   description         String?
   locationType        String    @default("online")
   locationValue       String?
-  slug                String
+  slug                String?
   host_id             Int
   durationMinutes     Int
   bufferBeforeMinutes Int       @default(0)
@@ -41,7 +41,7 @@ model eventType {
   slot                slot[]
   boooking            booking[]
 
-  @@unique([host_id, slug])
+  @@unique([host_id, slug]) //every user must have unique slugs
   @@map("event_types")
 }
 
