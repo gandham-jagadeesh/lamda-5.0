@@ -12,5 +12,5 @@ export function successResponse<T>(res: Response, data: T, statusCode: number = 
     data,
   }
   if (message) payload.message = message;
-  return res.status(statusCode).json(payload.data);
+  return res.status(statusCode).json(payload);
 }

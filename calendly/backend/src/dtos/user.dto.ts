@@ -9,8 +9,11 @@ import { z } from "zod";
 
 });
 
-const createUserSchema = userSchema;
-const updateUserSchema  = userSchema.partial();
+export const createUserSchema = userSchema;
+export const updateUserSchema = userSchema.partial()
+  .refine((data) => {
+    return !data.email === undefined && !data.password === undefined
+  }, {message:'At least one field must be provided'},);
 
 export type createUserDto = z.infer<typeof createUserSchema>;
 export type UpdateUserDto = z.infer<typeof updateUserSchema>;
