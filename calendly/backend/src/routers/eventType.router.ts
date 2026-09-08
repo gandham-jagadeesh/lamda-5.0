@@ -1,0 +1,16 @@
+import { Router } from "express";
+import { createEventType, removeEventType , getAllEvents, updateEventType, getAllActiveEvents, getEventByEventId, eventTypeParam} from "../controllers/eventType.controller.js"
+import { createEventTypeSchema, updateEventTypeSchema } from "../dtos/eventType.dto.js";
+import { validate } from "../middlewares/validate.js";
+import { requireUserId } from "../middlewares/require.user.id.js";
+
+export const eventTypeRouter: Router = Router();
+
+eventTypeRouter.use(requireUserId);
+
+eventTypeRouter.get("/",getAllEvents);
+eventTypeRouter.post("/",validate(createEventTypeSchema),createEventType);
+eventTypeRouter.delete("/:eventId",removeEventType);
+eventTypeRouter.put<eventTypeParam>("/:eventId",validate(updateEventTypeSchema),updateEventType)
+eventTypeRouter.get("/host/:hostId", getAllActiveEvents);
+eventTypeRouter.get("/event/:eventId", getEventByEventId);

@@ -9,21 +9,23 @@ export async function create(event: createEventTypeDTO & {slug:string}) {
   return createdEvent;
 } //create a event type
 
-export async function update(id: number, event: updateEventTypeDTO) {
-  const updatedUser = await prisma.eventType.update({
+export async function update(eventId: number, event: updateEventTypeDTO,hostId:number) {
+  const updatedResults = await prisma.eventType.updateManyAndReturn({
     where: {
-      id: id
+      id: eventId,
+      host_id:hostId
     },
     data: event
   });
-  return updatedUser;
+  return updatedResults;
 };
  // update an event type
 
-export async function remove(id:number) {
+export async function remove(id:number,hostId:number) {
   const removedUser = await prisma.eventType.delete({
     where: {
-      id: id
+      id: id,
+      host_id:hostId
     }
   });
   return removedUser;
@@ -36,7 +38,7 @@ export async function allEvents(userId:number) {
       host_id: userId
     }
   });
-  return allEvents;
+  return allEvents  === undefined ? [] : allEvents;
 } // get all events of that user
 
 export async function allActiveEvents(userId: number) {
@@ -46,7 +48,7 @@ export async function allActiveEvents(userId: number) {
       host_id:userId
     }
   });
-  return allUsers;
+  return allUsers === undefined ? [] : allUsers;
 } // get all active events of user
 
 export async function onlineEvents(hostId:number) {
@@ -56,15 +58,35 @@ export async function onlineEvents(hostId:number) {
       host_id:hostId
     }
   });
-  return allOnlineEvents;
+  allOnlineEvents === undefined ? [] : allOnlineEvents;
 } //get all online events of user
 
-export async function eventsBySlug(slug: string, userId: number) {
+export async function eventsBySlug(slug: string, hostId: number) {
   const allEvents = await prisma.eventType.findMany({
     where: {
       slug: slug,
-      host_id:userId
+      host_id:hostId
     }
   });
   return allEvents;
 } // get all events by slug of user
+
+
+export async function userExistsBySlug(hostId: number, slug: string) {
+  const user = await prisma.eventType.findFirst({
+    where: {
+      host_id: hostId,
+      slug: slug
+    }
+  });
+  return user !== undefined;
+}
+
+export async function getEvent(eventId: number) {
+  const event = await prisma.eventType.findFirst({
+    where: {
+      id: eventId
+    }
+  });
+  return event;
+} // get a event
