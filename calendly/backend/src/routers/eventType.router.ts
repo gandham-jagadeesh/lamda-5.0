@@ -11,6 +11,8 @@ eventTypeRouter.use(requireUserId);
 eventTypeRouter.get("/",getAllEvents);
 eventTypeRouter.post("/",validate(createEventTypeSchema),createEventType);
 eventTypeRouter.delete("/:eventId",removeEventType);
-eventTypeRouter.put<eventTypeParam>("/:eventId",validate(updateEventTypeSchema),updateEventType)
+eventTypeRouter.put<eventTypeParam>("/:eventId", validate(updateEventTypeSchema), updateEventType);
+eventTypeRouter.get("/:eventId", getEventByEventId);
+
+//public route : get all events of a host by id
 eventTypeRouter.get("/host/:hostId", getAllActiveEvents);
-eventTypeRouter.get("/event/:eventId", getEventByEventId);

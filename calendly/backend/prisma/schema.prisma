@@ -27,14 +27,14 @@ model eventType {
   id                  Int       @id @default(autoincrement())
   title               String
   description         String?
-  locationType        String    @default("online")
+  locationType        String @default("online")
   locationValue       String?
   slug                String?
   host_id             Int
   durationMinutes     Int
-  bufferBeforeMinutes Int       @default(0)
-  bufferAfterMinutes  Int       @default(0)
-  isActive            Boolean   @default(true)
+  bufferBeforeMinutes Int  @default(0)
+  bufferAfterMinutes  Int  @default(0)
+  isActive            Boolean @default(true)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   user                user      @relation(fields: [host_id], references: [id], onDelete: Cascade)

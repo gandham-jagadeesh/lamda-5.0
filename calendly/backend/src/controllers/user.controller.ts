@@ -35,9 +35,9 @@ export async function removeUser(req: Request<{id:string}>, res: Response, _next
 
 
 
-export async function updateUser(req: Request<{id:string}> , res: Response, _next: NextFunction) {
+export async function updateUser(req: Request , res: Response, _next: NextFunction) {
   const { id } = req.params;
-  const user_id = Number.parseInt(id);
+  const user_id = Number(id);
   const user = req.body;
   const updatedUser = await updateUserByService(user_id,user);
   successResponse(res, updatedUser,200,"user updated sucessfully");

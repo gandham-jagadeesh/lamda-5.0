@@ -1,37 +1,39 @@
 import { createEventTypeDTO } from "../dtos/eventType.dto.js";
-import { badRequest, conflict, notFound } from "../utils/api-error.js";
+import { conflict, notFound } from "../utils/api-error.js";
 import { allEvents, create, remove, update, userExistsBySlug , allActiveEvents , getEvent} from "../repository/eventType.repository.js";
 import slug from "slug";
 import { UpdateUserDto } from "../dtos/user.dto.js";
 
-export async function createEvent(userId: number, event: createEventTypeDTO) {
-  if (userId !== event.host_id) {
-    throw badRequest("unable to create event invalid host");
-  }
-  if (event.slug) { // in zod schema add refine or slug regexp logic
-    const isUserExist = await userExistsBySlug(userId, event.slug);
+//@Todo: slug : url compatabile : check then insert if not then throw error bad request
+export async function createEvent(hostId: number, event: createEventTypeDTO) {
+  if (event.slug) {
+    const isUserExist = await userExistsBySlug(hostId, event.slug);
     if (isUserExist) {
-      throw conflict("slug already exists");
+      throw conflict("An event type with slug already exists, please use a different slug");
     }
   }
-  //need to have slug regex to check the validity if exists -> in middleware
-  const newSlug = event.slug ? event.slug : slug(event.title,{lower:true});
+  const newSlug = event.slug ? event.slug : slug(event.title, { lower: true });
+  if (!newSlug) {
+    throw conflict("could not able to create a slug for event type");
+  }
   const newEventType = await create({ ...event, slug: newSlug });
   return newEventType;
 }
 
 
-export async function removeEvent(eventId: number, userId: number) {
-  const removedEvent = await remove(eventId, userId);  // if logged in user has such an event then remove it else throw not found error
+export async function removeEvent(id: number, hostId: number) {
+  const removedEvent = await remove(id, hostId);
   if (!removedEvent) {
     throw notFound("Event not Found");
   }
   return removedEvent;
 }
 
+// in update need to check : fields : slu
 
-export async function updateEvent(event: UpdateUserDto, eventId: number, userId: number) {
-  const updatedEvents = await update(eventId, event, userId); // run findmany to update all events whose matching with userid and eventid ofcourse its unique
+export async function updateEvent(event: UpdateUserDto, id: number, userId: number) {
+  //get the event and check whether we can't allow some data and throw bunch of errors and then resolve those then
+  const updatedEvents = await update(id, event, userId); // run findmany to update all events whose matching with userid and id ofcourse its unique
   if (updatedEvents.length === 0) {
     throw notFound("Event not Found");
   }
@@ -50,8 +52,8 @@ export async function getPublicAllActiveEvents(id:number) {
   return userPubliEvents;
 }
 
-export async function getEventById(eventId: number) {
-  const event = await getEvent(eventId);
+export async function getEventById(id: number) {
+  const event = await getEvent(id);
   if (!event) {
     throw notFound("Event Not Found");
   }
