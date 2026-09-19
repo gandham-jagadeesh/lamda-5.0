@@ -13,6 +13,7 @@ export function requireUserId(req: Request, _res: Response, next: NextFunction) 
         throw badRequest('x-user-id header must be a valid number');
     }
 
-    req.userId = userId;
+  req.userId = userId;
+  console.log(`[middleware layer: ${req.userId}`);
     next();
 }

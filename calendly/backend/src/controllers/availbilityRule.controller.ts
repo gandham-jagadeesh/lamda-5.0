@@ -21,7 +21,8 @@ export async function removeRule(req: Request, res: Response, _next: NextFunctio
 export async function updateRule(req: Request, res: Response, _next: NextFunction) {
   const id = Number(req.params.id);
   const userId = req.userId;
-  const data = await service.removeRule(id, userId);
+  const rule = req.body;
+  const data = await service.updateRule(id, rule, userId);
   successResponse(res, data, 200, "rule updated sucessfully");
 }
 

@@ -1,14 +1,15 @@
-import express from "express";
+import express, { Router } from "express";
 import * as availbilityController from "../controllers/availbilityRule.controller.js";
 import { requireUserId } from "../middlewares/require.user.id.js";
 import { validate } from "../middlewares/validate.js";
 import { createAvailabilityRuleSchema, updateAvailabilityRuleSchema } from "../dtos/availbility.dto.js";
-const router = express.Router();
 
-router.use(requireUserId);
+ export const availabilityRuleRouter:Router = express.Router();
 
-router.get("/", availbilityController.getRules);
-router.get("/:id", availbilityController.getRule);
-router.post("/",validate(createAvailabilityRuleSchema),availbilityController.createRule);
-router.delete("/:id", availbilityController.removeRule);
-router.put("/:id", validate(updateAvailabilityRuleSchema),availbilityController.updateRule);
+availabilityRuleRouter.use(requireUserId);
+
+availabilityRuleRouter.get("/", availbilityController.getRules);
+availabilityRuleRouter.get("/:id", availbilityController.getRule);
+availabilityRuleRouter.post("/",validate(createAvailabilityRuleSchema),availbilityController.createRule);
+availabilityRuleRouter.delete("/:id", availbilityController.removeRule);
+availabilityRuleRouter.put("/:id", validate(updateAvailabilityRuleSchema),availbilityController.updateRule);

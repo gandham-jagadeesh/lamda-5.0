@@ -4,6 +4,7 @@ import { errorHandler } from "./middlewares/error.handler.js";
 import { noRouteHandler } from "./middlewares/path.handler.js";
 import { userRouter } from "./routers/user.router.js";
 import { eventTypeRouter } from "./routers/eventType.router.js"
+import { availabilityRuleRouter } from "./routers/availbility.router.js";
 
 
 const app: Express = express();
@@ -18,7 +19,9 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/v1/user", userRouter);
-app.use("/api/v1/eventType",eventTypeRouter)
+app.use("/api/v1/eventType", eventTypeRouter);
+app.use("/api/v1/availbilityRule", availabilityRuleRouter);
+
 app.use(noRouteHandler);
 app.use(errorHandler);
 

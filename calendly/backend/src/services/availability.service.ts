@@ -41,6 +41,7 @@ export async function updateRule(id: number, rule: updateAvailbilityRuleDTO, use
 export async function getRule(id: number,userId:number) {
   const existedRule = await availability.getRule(id);
   if (!existedRule) {
+    console.log(`[get a single rule for a loggedin user]`, existedRule);
     throw notFound("rule not found");
   }
   if (existedRule.user_id !== userId) {
@@ -50,6 +51,7 @@ export async function getRule(id: number,userId:number) {
   if (!rule) {
     throw notFound("rule not Found");
   }
+  return rule;
 }
 
 

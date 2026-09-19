@@ -7,7 +7,8 @@ export async function createRule(rule: createAvailbilityRuleDTO,userId:number) {
 }
 
 //TODO apply pagination
-export async function getRules(userId:number) {
+export async function getRules(userId: number) {
+  console.log(`repo layer : ${userId}`);
   const allRules = await prisma.availabilityRule.findMany({
     where: {
       user_id: userId
