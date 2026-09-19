@@ -1,10 +1,10 @@
 import { createEventTypeDTO } from "../dtos/eventType.dto.js";
-import { conflict, notFound } from "../utils/api-error.js";
-import { allEvents, create, remove, update, userExistsBySlug , allActiveEvents , getEvent} from "../repository/eventType.repository.js";
+import {  conflict, notFound, unauthorized } from "../utils/api-error.js";
+import { allEvents, create, remove, update, userExistsBySlug , allActiveEvents , getEvent, eventsBySlug} from "../repository/eventType.repository.js";
 import slug from "slug";
 import { UpdateUserDto } from "../dtos/user.dto.js";
 
-//@Todo: slug : url compatabile : check then insert if not then throw error bad request
+// TODO  unique slug creation , throw error if slug is not url compatabile
 export async function createEvent(hostId: number, event: createEventTypeDTO) {
   if (event.slug) {
     const isUserExist = await userExistsBySlug(hostId, event.slug);
@@ -16,24 +16,39 @@ export async function createEvent(hostId: number, event: createEventTypeDTO) {
   if (!newSlug) {
     throw conflict("could not able to create a slug for event type");
   }
-  const newEventType = await create({ ...event, slug: newSlug });
+  const newEventType = await create(hostId,{ ...event, slug: newSlug });
   return newEventType;
 }
 
 
 export async function removeEvent(id: number, hostId: number) {
-  const removedEvent = await remove(id, hostId);
-  if (!removedEvent) {
+  const eventToRemove = await getEvent(id);
+  if (!eventToRemove) {
     throw notFound("Event not Found");
   }
+  if (eventToRemove.host_id !== hostId) {
+    throw notFound("eventType with given id not  Found");
+  }
+  const removedEvent = await remove(id);
   return removedEvent;
 }
 
-// in update need to check : fields : slu
 
 export async function updateEvent(event: UpdateUserDto, id: number, userId: number) {
-  //get the event and check whether we can't allow some data and throw bunch of errors and then resolve those then
-  const updatedEvents = await update(id, event, userId); // run findmany to update all events whose matching with userid and id ofcourse its unique
+  const existedEvent = await getEvent(id);
+  if (!existedEvent) {
+    throw notFound("event with given id not Found");
+  }
+  if (existedEvent.host_id !== userId) {
+    throw unauthorized("not have necessary permisson to modify the event");
+  }
+  if (event.slug && event.slug !== existedEvent.slug) {
+    const otherEvents = await eventsBySlug(event.slug, userId);
+    if (otherEvents) {
+      throw conflict("slug is already existed");
+    }
+  }
+  const updatedEvents = await update(id, event, userId);
   if (updatedEvents.length === 0) {
     throw notFound("Event not Found");
   }

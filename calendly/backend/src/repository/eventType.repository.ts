@@ -2,9 +2,12 @@ import { prisma } from "../config/database.js";
 import { createEventTypeDTO, updateEventTypeDTO } from "../dtos/eventType.dto.js";
 
 // need to take care of the slug
-export async function create(event: createEventTypeDTO & {slug:string}) {
+export async function create(hostId:number,event: createEventTypeDTO & {slug:string}) {
   const createdEvent = await prisma.eventType.create({
-    data:event
+    data: {
+      host_id:hostId,
+      ...event
+    },
   });
   return createdEvent;
 } //create a event type
@@ -21,14 +24,13 @@ export async function update(eventId: number, event: updateEventTypeDTO,hostId:n
 };
  // update an event type
 
-export async function remove(id:number,hostId:number) {
-  const removedUser = await prisma.eventType.delete({
+export async function remove(id:number) {
+  const event = await prisma.eventType.delete({
     where: {
-      id: id,
-      host_id:hostId
+      id: id
     }
   });
-  return removedUser;
+  return event;
 } //remove an event type
 
 // events of that user

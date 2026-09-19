@@ -9,7 +9,8 @@ export const eventTypeRouter: Router = Router();
 eventTypeRouter.use(requireUserId);
 
 eventTypeRouter.get("/",getAllEvents);
-eventTypeRouter.post("/",validate(createEventTypeSchema),createEventType);
+eventTypeRouter.post("/", validate(createEventTypeSchema), createEventType);
+//TODO use id
 eventTypeRouter.delete("/:eventId",removeEventType);
 eventTypeRouter.put<eventTypeParam>("/:eventId", validate(updateEventTypeSchema), updateEventType);
 eventTypeRouter.get("/:eventId", getEventByEventId);

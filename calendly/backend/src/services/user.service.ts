@@ -48,3 +48,11 @@ export async function removeUser(id: number) {
   const removedUser = await remove(id);
   return removedUser;
 }
+
+export async function userExistsWithEmail(email: string) {
+  const user = await getByEmail(email);
+  if (user) {
+    return true;
+  }
+  return false;
+}

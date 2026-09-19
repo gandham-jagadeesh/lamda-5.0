@@ -13,7 +13,7 @@ export interface eventTypeHostParam{
 export async function createEventType(req: Request, res: Response, _next: NextFunction) {
   const userId = req.userId;
   const event = req.body;
-  const createdEvent = await createEventByService(userId, event);
+  const createdEvent = await createEventByService(userId, { ...event,host_id:userId });
   return successResponse(res, createdEvent, 201, "event created successfully");
 }
 
@@ -35,6 +35,7 @@ export async function updateEventType(req: Request<eventTypeParam>, res: Respons
   return successResponse(res, updatedEvent, 200, "updated event successfully");
 }
 
+// TODO  study and apply pagination
 export async function getAllEvents(req: Request, res: Response, _next: NextFunction) {
   const userId = req.userId;
   const allEvents = await getAllActiveEventsByService(userId);
@@ -44,7 +45,7 @@ export async function getAllEvents(req: Request, res: Response, _next: NextFunct
 export async function getAllActiveEvents(req: Request<eventTypeHostParam>, res: Response, _next: NextFunction) {
   const { hostId } = req.params;
   const transformedhostId = Number.parseInt(hostId);
-  const allActiveEventsOfHost = await getAllActiveEventsByService(transformedhostId);
+  const allActiveEventsOfHost = await getPublicAllActiveEventsByService(transformedhostId);
   successResponse(res,allActiveEventsOfHost,200);
 }
 

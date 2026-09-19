@@ -1,7 +1,8 @@
 import { Request , Response , NextFunction } from "express"
-import { findAll as findAllByService, findById as findByIdByService, removeUser as removeUserByService , updateUser as updateUserByService } from "../services/user.service.js"
+import { findAll as findAllByService, findById as findByIdByService, removeUser as removeUserByService , updateUser as updateUserByService , userExistsWithEmail as userExistsWithEmailByService } from "../services/user.service.js"
 import { successResponse } from "../utils/api-success-response.js";
 import { create } from "../repository/user.repository.js";
+import { conflict } from "../utils/api-error.js";
 
 export  async function  getAllUsers(_req: Request, res: Response, _next: NextFunction){
   const users = await findAllByService();
@@ -21,7 +22,12 @@ export async function getUser(req: Request<userParam>, res: Response, _next: Nex
 
 export async function createUser(req: Request , res: Response, _next: NextFunction) {
   const user = req.body;
-  console.log("[user] log : ",user);
+  if (user.email) {
+    const userExists = await userExistsWithEmailByService(user.email);
+    if (userExists) {
+      throw conflict("user with such email already exists pick a new one");
+    }
+  }
   const createdUser = await create(user);
   successResponse(res, createdUser,201,"user created sucessfully");
 }
