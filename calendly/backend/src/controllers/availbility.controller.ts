@@ -17,7 +17,7 @@ export async function removeRule(req: Request, res: Response, _next: NextFunctio
   successResponse(res, data, 200,"rule removed successfully");
 }
 
-
+// TODO Handle empty body scenario
 export async function updateRule(req: Request, res: Response, _next: NextFunction) {
   const id = Number(req.params.id);
   const userId = req.userId;

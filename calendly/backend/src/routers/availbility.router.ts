@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import * as availbilityController from "../controllers/availbilityRule.controller.js";
+import * as availbilityController from "../controllers/availbility.controller.js";
 import { requireUserId } from "../middlewares/require.user.id.js";
 import { validate } from "../middlewares/validate.js";
 import { createAvailabilityRuleSchema, updateAvailabilityRuleSchema } from "../dtos/availbility.dto.js";
