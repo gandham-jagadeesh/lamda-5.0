@@ -40,3 +40,51 @@ export async function getRule(req: Request, res: Response, _next: NextFunction) 
   const data = await service.getRule(id, userId);
   successResponse(res, data);
 }
+
+
+export async function createException(req: Request, res: Response, _next: NextFunction) {
+  const userId = req.userId;
+  const exception = req.body;
+  const createdException = await service.createException(exception, userId)
+  successResponse(res, createdException, 201);
+}
+
+
+export async function removeException(req: Request, res: Response, _next: NextFunction) {
+  const id = req.params.id;
+  const transformedId = Number(id);
+  const userId = req.userId;
+  const removedException = await service.removeException(transformedId, userId);
+  successResponse(res, removedException, 200);
+}
+
+export async function getAllExceptions(req: Request, res: Response, _next: NextFunction) {
+  const userId = req.userId;
+  const allExceptions = await service.getAllExceptions(userId);
+  successResponse(res, allExceptions, 200);
+}
+
+export async function findException(req: Request, res: Response, _next: NextFunction) {
+  const id = req.params.id;
+  const transformedId = Number(id);
+  const userId = req.userId;
+  const exception = await service.getException(transformedId, userId);
+  successResponse(res, exception, 200);
+}
+
+export async function updateException(req: Request, res: Response, _next: NextFunction) {
+  const id = req.params.id;
+  const transformedId = Number(id);
+  const userId = req.userId;
+  const exception = req.body;
+  const updatedException = await service.updateException(transformedId, exception, userId);
+  successResponse(res, updatedException, 200);
+}
+
+//TODO add date validation
+export async function getExceptionByDate(req: Request, res: Response, _next: NextFunction) {
+  const date = req.query.date as string;
+  const userId = req.userId;
+  const allExceptionsByDate = await service.getbyDate(userId, date);
+  successResponse(res, allExceptionsByDate, 200);
+}

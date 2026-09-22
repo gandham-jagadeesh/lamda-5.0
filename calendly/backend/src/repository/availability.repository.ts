@@ -8,7 +8,6 @@ export async function createRule(rule: createAvailbilityRuleDTO,userId:number) {
 
 //TODO apply pagination
 export async function getRules(userId: number) {
-  console.log(`repo layer : ${userId}`);
   const allRules = await prisma.availabilityRule.findMany({
     where: {
       user_id: userId
@@ -37,7 +36,7 @@ export async function updateRule(id: number, rule: updateAvailabilityExceptionDT
     data: rule
   });
   return updatedRule;
-}
+}\
 
 export async function getRuleByweek(userId:number,week: string) {
   const rules = await prisma.availabilityRule.findMany({
@@ -71,7 +70,7 @@ export async function getException(id: number) {
   return exception;
 }
 
-export async function removeExceptions(id: number) {
+export async function removeException(id: number) {
   const removedException = await prisma.availabilityException.delete({
     where: {
       id: id
@@ -93,28 +92,35 @@ export async function getAllExceptions(userId: number) {
   return userExceptions;
 }
 
+//NOTE added neutral time stamp to make sure js internally won't edit date to before or after date's based on local utc timings
 export async function updateException(id: number, ex: updateAvailabilityExceptionDTO) {
+  const { date, ...rest} = ex;
   const updatedException = await prisma.availabilityException.update({
     where: {
       id: id
     },
-    data: ex
+    data: {
+      ...rest,
+      ...(date !== undefined && {date : new Date(`{date}T00:00:00.000Z`)}),
+    },
   });
   return updatedException;
 }
 
-export async function createException(ex: createAvailabilityExceptionDTO,userId:number) {
+export async function createException(ex: createAvailabilityExceptionDTO, userId: number) {
+  const { date, ...exception } = ex;
   const createdException = await prisma.availabilityException.create({
-    data: { ...ex, user_id: userId }
+    data: { ...exception,date:new Date(`${date}T00:00:00.000Z`), user_id: userId }
   });
   return createdException;
 }
 
 // NOTE get exception by date
-export async function getExceptionByDate(date:Date) {
+export async function getExceptionByDate(date:string,userId:number) {
   const exceptions = await prisma.availabilityException.findMany({
     where: {
-      date:date
+      date: new Date(`${date}T00:00:00.000Z`),
+      user_id:userId
     },
     orderBy: {
       updatedAt:"desc"
