@@ -36,7 +36,7 @@ export async function updateRule(id: number, rule: updateAvailabilityExceptionDT
     data: rule
   });
   return updatedRule;
-}\
+}
 
 export async function getRuleByweek(userId:number,week: string) {
   const rules = await prisma.availabilityRule.findMany({
