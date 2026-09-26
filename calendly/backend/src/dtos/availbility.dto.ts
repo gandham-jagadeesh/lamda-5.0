@@ -56,6 +56,14 @@ export const updateAvailabilityRuleValidationSchema = availabilityRuleBaseSchema
    })
   }
 
+  if (hasStart && hasEnd && data.startTime! >= data.endTime!) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['startTime', 'endTime'],
+      message:'startTime must be less than endTime'
+    })
+  }
+
 });
 
 
@@ -67,15 +75,15 @@ const availabilityExceptionBaseSchema = z.object({
 
   startTime: z.string().regex(/^(?:[0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/, {
     message: "Invalid time format. Expected HH:MM:SS"
-  }).optional(),
+  }),
 
   endTime: z.string().regex(/^(?:[0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/, {
     message: "Invalid time format. Expected HH:MM:SS"
-  }).optional(),
+  }),
 
-  timezone: z.string().default("UTC").optional(),
+  timezone: z.string(),
 
-  reason: z.string().optional(),
+  reason: z.string()
 
 });
 
@@ -86,7 +94,20 @@ const availabilityExceptionBaseSchema = z.object({
 // wrong time zone format being used in timezone //dont worry for now
 // random weird reason data need to use reg ex  // dont worry for now dont use regex for every thing
 
-export const createAvailabilityExceptionValidationSchema = availabilityExceptionBaseSchema.superRefine((data, ctx) => {
+export const createAvailabilityExceptionValidationSchema = availabilityExceptionBaseSchema.extend({
+  startTime: z.string().regex(/^(?:[0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/, {
+    message: "Invalid time format. Expected HH:MM:SS"
+  }).optional(),
+
+  endTime: z.string().regex(/^(?:[0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/, {
+    message: "Invalid time format. Expected HH:MM:SS"
+  }).optional(),
+
+  timezone: z.string().default("UTC"),
+
+  reason: z.string().optional()
+}).superRefine((data, ctx) => {
+
   if (data.type === "full") {
     const  isStartTime = data.startTime !== undefined;
     const  isEndTime = data.endTime !== undefined;
@@ -94,7 +115,7 @@ export const createAvailabilityExceptionValidationSchema = availabilityException
       ctx.addIssue({
         code: 'custom',
         path: ['startTime', 'endTime'],
-        message:'full exception cannot have   startTime and endTime'
+        message:'full exception cannot have  startTime and endTime'
       })
     }
   }
@@ -128,6 +149,14 @@ export const createAvailabilityExceptionValidationSchema = availabilityException
 
 
 export const updateAvailabilityExceptionValidationSchema = availabilityExceptionBaseSchema.partial().superRefine((data, ctx) => {
+
+  if (Object.keys(data).length === 0) {
+    ctx.addIssue({
+      code: 'custom',
+      message:"at least one field must be provided"
+    });
+  }
+
   if (data.type === "full" && (data.startTime !== undefined || data.endTime !== undefined)) {
     ctx.addIssue({
       code: "custom",

@@ -19,8 +19,8 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/eventType", eventTypeRouter);
-app.use("/api/v1/availbilityRule", availabilityRouter);
-app.use("/api/v1/availabilityException", exceptionRouter);
+app.use("/api/v1/rule", availabilityRouter);
+app.use("/api/v1/exception", exceptionRouter);
 
 app.use(noRouteHandler);
 app.use(errorHandler);

@@ -1,3 +1,4 @@
+import { copyFileSync } from "node:fs";
 import { createAvailabilityExceptionDTO, createAvailbilityRuleDTO, updateAvailbilityRuleDTO } from "../dtos/availbility.dto.js";
 import * as availability from "../repository/availability.repository.js";
 import { notFound, unauthorized } from "../utils/api-error.js";
@@ -60,10 +61,10 @@ export async function createException(exception: createAvailabilityExceptionDTO,
 export async function removeException(id: number, userId: number) {
   const exception = await availability.getException(id);
   if (!exception) {
-    notFound("no exception found");
+    throw notFound("no exception found");
   }
   if (exception && exception.user_id !== userId) {
-    unauthorized("cannot access exception");
+    throw unauthorized("cannot access exception");
   }
   const removedException = await availability.removeException(id);
   return removedException;
@@ -73,10 +74,10 @@ export async function removeException(id: number, userId: number) {
 export async function updateException(id: number, ex: updateAvailbilityRuleDTO, userId: number) {
   const exception = await availability.getException(id);
   if (!exception) {
-    notFound("no exception found");
+    throw notFound("no exception found");
   }
   if (exception && exception.user_id !== userId) {
-    unauthorized("cannot access exception");
+    throw unauthorized("cannot access exception");
   }
   const updatedException = await availability.updateException(id, ex);
   return updatedException;
@@ -94,12 +95,13 @@ export async function getbyDate(userId: number, date: string) {
 }
 
 export async function getException(id: number, userId: number) {
-    const exception = await availability.getException(id);
+  const exception = await availability.getException(id);
+  console.log(`[service layer : ${exception}  value : ${!exception}]`);
     if (!exception) {
-      notFound("no exception found");
+      throw notFound("no exception found");
     }
     if (exception && exception.user_id !== userId) {
-      unauthorized("cannot access exception");
+      throw unauthorized("cannot access exception");
     }
-    return getAllExceptions(userId);
+  return exception;
   }

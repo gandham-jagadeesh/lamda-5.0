@@ -20,10 +20,10 @@ availabilityRouter.put("/:id", validate(updateAvailabilityRuleValidationSchema),
 
 exceptionRouter.use(requireUserId);
 
+exceptionRouter.get("/date", availbilityController.getExceptionByDate);
 exceptionRouter.get("/", availbilityController.getAllExceptions);
 exceptionRouter.get("/:id", availbilityController.findException);
 exceptionRouter.post("/",validate(createAvailabilityExceptionValidationSchema),availbilityController.createException);
 exceptionRouter.delete("/:id", availbilityController.removeException);
 exceptionRouter.put("/:id", validate(updateAvailabilityExceptionValidationSchema),availbilityController.updateException);
 //TODO Add validation for date
-exceptionRouter.get("/date", availbilityController.getExceptionByDate);

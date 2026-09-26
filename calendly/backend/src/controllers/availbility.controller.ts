@@ -83,6 +83,7 @@ export async function updateException(req: Request, res: Response, _next: NextFu
 
 //TODO add date validation
 export async function getExceptionByDate(req: Request, res: Response, _next: NextFunction) {
+  console.log(req.query);
   const date = req.query.date as string;
   const userId = req.userId;
   const allExceptionsByDate = await service.getbyDate(userId, date);
