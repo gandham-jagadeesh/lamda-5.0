@@ -1,0 +1,692 @@
+{
+  "info": {
+    "_postman_id": "9295ee60-65ef-4240-b5b1-2a79fbf4c5d2",
+    "name": "calendly",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "23481411"
+  },
+  "item": [
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "get all users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3001/api/v1/user",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\r\n    \"email\": \"g@gmail.com\",\r\n    \"password\": \"Shankar@1\",\r\n    \"slug\":\"super-done-deedhi-x-super valid \"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:3001/api/v1/user/",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "user",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete user",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "localhost:3001/api/v1/user/9",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "user",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3001/api/v1/user/7",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "user",
+                "7"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "modify user",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n            \"slug\": \"super-done-deedhu\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:3001/api/v1/user/7",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "user",
+                "7"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "events",
+      "item": [
+        {
+          "name": "get all events of user",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "2"
+              }
+            ],
+            "url": {
+              "raw": "localhost:3001/api/v1/eventType/",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "eventType",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\":\"resume review\",\r\n    \"durationInMinutes\":15,\r\n    \"locationType\":\"online\",\r\n    \"bufferBeforeInMinutes\":0,\r\n    \"bufferAfterInMinutes\":0\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:3001/api/v1/eventType/",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "eventType",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get an event",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "url": {
+              "raw": "localhost:3001/api/v1/eventType/9",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "eventType",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update an event",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n        \"isActive\":false\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:3001/api/v1/eventType/11",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "eventType",
+                "11"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete an event",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "url": {
+              "raw": "localhost:3001/api/v1/eventType/9",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "eventType",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get the all active events of a host",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "2"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "localhost:3001/api/v1/eventType/host/7",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "eventType",
+                "host",
+                "7"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "availability rules",
+      "item": [
+        {
+          "name": "get availability rules",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:3001/api/v1/rule",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "rule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get a rule",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "url": {
+              "raw": "localhost:3001/api/v1/rule",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "rule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create  a new rule",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n            \"weekday\": \"wed\",\r\n            \"isActive\": true,\r\n            \"timezone\": \"UTC\",\r\n            \"startTime\": \"09:00:00\",\r\n            \"endTime\": \"12:00:00\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:3001/api/v1/rule",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "rule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete rule",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "url": {
+              "raw": "localhost:3001/api/v1/rule/4",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "rule",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update rule",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n \"week\":\"mon\",\r\n \"startTime\":\"02:00:00\",\r\n \"endTime\":\"04:00:00\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:3001/api/v1/rule/5",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "rule",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "availability exceptions",
+      "item": [
+        {
+          "name": "get all availability exceptions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:3001/api/v1/exception",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "exception"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get exception",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "url": {
+              "raw": "localhost:3001/api/v1/exception/3",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "exception",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create a new  request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"type\":\"available\",\r\n    \"date\":\"2026-12-27\",\r\n    \"startTime\":\"09:30:45\",\r\n    \"endTime\":\"10:30:46\",\r\n    \"reason\":\"not gonna be on good mood\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:3001/api/v1/exception",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "exception"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete the exception",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "url": {
+              "raw": "localhost:3001/api/v1/exception/2",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "exception",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update the exception",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:3001/api/v1/exception/3",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "exception",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get exception by date",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "7"
+              }
+            ],
+            "url": {
+              "raw": "localhost:3001/api/v1/exception/date?date=2026-12-27",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "api",
+                "v1",
+                "exception",
+                "date"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-12-27"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3001",
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

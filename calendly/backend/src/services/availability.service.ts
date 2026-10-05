@@ -1,4 +1,3 @@
-import { copyFileSync } from "node:fs";
 import { createAvailabilityExceptionDTO, createAvailbilityRuleDTO, updateAvailbilityRuleDTO } from "../dtos/availbility.dto.js";
 import * as availability from "../repository/availability.repository.js";
 import { notFound, unauthorized } from "../utils/api-error.js";
@@ -105,3 +104,9 @@ export async function getException(id: number, userId: number) {
     }
   return exception;
   }
+
+
+export async function getExceptionToandFrom(userId: number, to: string, from: string) {
+  const exceptions = await availability.getExceptionByDateRange(userId, to, from);
+  return exceptions;
+}

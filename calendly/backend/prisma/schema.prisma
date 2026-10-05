@@ -80,7 +80,7 @@ model availabilityException {
 }
 
 model slot {
-  id           String   @id @default(cuid()) // why we used cuid :
+  id           String   @id @default(cuid()) // why we used cuid : reason
   host_id      Int
   eventType_id Int
   startAt      DateTime

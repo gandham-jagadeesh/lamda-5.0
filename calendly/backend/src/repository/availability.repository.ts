@@ -128,3 +128,17 @@ export async function getExceptionByDate(date:string,userId:number) {
   });
   return exceptions;
 }
+
+
+export async function getExceptionByDateRange(userId: number, toDate: string, fromDate: string) {
+  const exceptions = await prisma.availabilityException.findMany({
+    where: {
+      user_id: userId,
+      date: {
+        gte: new Date(`${toDate}T00:00:00.000Z`),
+        lte: new Date(`${fromDate}T00:00:00.000Z`),
+      }
+    }
+  });
+  return exceptions;
+}

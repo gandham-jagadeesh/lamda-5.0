@@ -16,7 +16,7 @@ export async function createEvent(hostId: number, event: createEventTypeDTO) {
   if (!newSlug) {
     throw conflict("could not able to create a slug for event type");
   }
-  const newEventType = await create(hostId,{ ...event, slug: newSlug });
+  const newEventType = await create(hostId, { ...event, slug: newSlug });
   return newEventType;
 }
 
