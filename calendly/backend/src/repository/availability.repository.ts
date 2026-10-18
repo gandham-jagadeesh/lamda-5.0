@@ -38,7 +38,7 @@ export async function updateRule(id: number, rule: updateAvailabilityExceptionDT
   return updatedRule;
 }
 
-export async function getRuleByweek(userId:number,week: string) {
+export async function getRuleByweek(userId:number,week: number) {
   const rules = await prisma.availabilityRule.findMany({
     where: {
     user_id:userId,
@@ -130,13 +130,13 @@ export async function getExceptionByDate(date:string,userId:number) {
 }
 
 
-export async function getExceptionByDateRange(userId: number, toDate: string, fromDate: string) {
+export async function getExceptionByDateRange(userId: number, toDate: Date, fromDate: Date) {
   const exceptions = await prisma.availabilityException.findMany({
     where: {
       user_id: userId,
       date: {
-        gte: new Date(`${toDate}T00:00:00.000Z`),
-        lte: new Date(`${fromDate}T00:00:00.000Z`),
+        gte: fromDate,
+        lte: toDate
       }
     }
   });

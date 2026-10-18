@@ -61,6 +61,11 @@ export async function getAllEvents(userId:number) {
   return events;
 }
 
+export async function getAllActiveEvents(userId: number) {
+  const activeEvents = await allActiveEvents(userId);
+  return activeEvents;
+}
+
 // get events of speific user which are active : public api
 export async function getPublicAllActiveEvents(id:number) {
   const userPubliEvents = await allActiveEvents(id)

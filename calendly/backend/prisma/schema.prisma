@@ -48,7 +48,7 @@ model eventType {
 model availabilityRule {
   id        Int      @id @default(autoincrement())
   user_id   Int
-  weekday   String
+  weekday   Int
   isActive  Boolean  @default(true)
   timezone  String   @default("UTC")
   startTime String

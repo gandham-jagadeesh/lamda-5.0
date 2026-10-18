@@ -2,7 +2,7 @@ import { z } from "zod";
 
 
 const availabilityRuleBaseSchema = z.object({
-  weekday: z.enum(["mon", "tue", "wed", "thu", "fri", "sat", "sun"]),
+  weekday: z.int().min(0).max(6),
 
   isActive: z.boolean(),
 
