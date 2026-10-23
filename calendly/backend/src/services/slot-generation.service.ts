@@ -2,9 +2,10 @@ import { DateTime } from "luxon";
 import { getRules } from "../services/availability.service.js"
 import { getExceptionToandFrom} from "../services/availability.service.js"
 import { getAllActiveEvents  } from "../services/eventType.service.js"
-import { FindBookedSlotsByHostInRange } from "../repository/slot.repository.js"
+import { blockSlot, FindBookedSlotsByHostInRange, findFutureSlotsByEventTypeInRange, upsertSlots } from "../repository/slot.repository.js"
 import { findById } from "../services/user.service.js"
 import { SLOT_GENERATION_DAYS } from "../config/env.js"
+import { windowsForWeekDayRule ,applyExceptionsForDate, splitIntoSlots, overlapsBooked } from "./slot.service.js";
 
 interface window{
   startTime: DateTime
@@ -18,8 +19,8 @@ interface regenerateHostSlotsInfo {
 }
 
 export async function regenerateHostSlots(slotInfo: regenerateHostSlotsInfo) {
-  const host = await findById(slotInfo.hostId);
 
+  const host = await findById(slotInfo.hostId);
 //convert to and from date into luxon date format
   const from = slotInfo.from ? DateTime.fromISO(slotInfo.from, { zone: 'utc' }).startOf('day') : DateTime.now().startOf('day').toUTC();
  // need to add last date + for how many months we are generating slots put that as .env
@@ -54,9 +55,29 @@ export async function regenerateHostSlots(slotInfo: regenerateHostSlotsInfo) {
       }));
 
       // we got all the exceptions for that date itself we need to get all the rules for that date
-      let validRuleWidows: window[] = [];
+      let validWindows: window[] = [];
       for (let rule of rules) {
-        validRuleWidows.push()
+        validWindows.push(...windowsForWeekDayRule(cursor, rule.weekday, rule.startTime, rule.endTime, rule.timezone));
+      }
+      //apply exceptions on those available windows
+      validWindows = applyExceptionsForDate(cursor, validWindows, exceptionsWithTimeZone);
+      // check whether any booked slots overlapped with valid window slots
+      // //we are checking slot.start > DateTime.utc() because we are filtering slots for future if slot is past we dont care about that slot
+      const slots = splitIntoSlots(validWindows, event.durationMinutes, event.bufferBeforeMinutes, event.bufferAfterMinutes).filter((slot) => slot.start > DateTime.utc() && !overlapsBooked(slot, occupiedSlots, event.bufferBeforeMinutes, event.bufferAfterMinutes));
+
+      for (let slot of slots) {
+        const startAt = slot.start.toUTC().toJSDate();
+        const endAt = slot.end.toUTC().toJSDate();
+        const key = `${event.id}|${startAt.toISOString()}|${endAt.toISOString()}`;
+        generatedValidSlotKeys.add(key);
+        await upsertSlots(host.id,event.id,startAt,endAt);
+      }
+    }
+    const futureSlots = await findFutureSlotsByEventTypeInRange(event.id, from.toJSDate(), to.toJSDate());
+    for (let fs of futureSlots) {
+      const key = `${event.id}|${fs.startAt.toISOString()}|${fs.endAt.toISOString()}`;
+      if (!generatedValidSlotKeys.has(key)) {
+        await blockSlot(fs.id);
       }
     }
   }

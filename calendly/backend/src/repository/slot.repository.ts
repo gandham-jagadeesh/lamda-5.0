@@ -22,3 +22,44 @@ export async function FindBookedSlotsByHostInRange(hostId: number, startDate: Da
   });
   return bookedslots;
 }
+
+
+export async function upsertSlots(hostId: number, eventTypeId: number, startAt: Date, endAt: Date) {
+  return prisma.slot.upsert({
+    where: {
+      eventType_id_startAt_endAt: {
+        eventType_id: eventTypeId,
+        startAt,
+        endAt
+      },
+    },
+    create: {
+      host_id: hostId,
+      eventType_id: eventTypeId,
+      startAt: startAt,
+      endAt: endAt,
+      status: "AVAILABLE"
+    },
+    update: {
+      status: "AVAILABLE"
+    }
+  });
+}
+
+
+export async function findFutureSlotsByEventTypeInRange(eventTypeId: number, startDate: Date, endDate: Date) {
+  return prisma.slot.findMany({
+    where: {
+      eventType_id: eventTypeId,
+      startAt: { gte: startDate, lte: endDate },
+      status: { in: ["AVAILABLE", "BLOCKED"] }
+    }
+  });
+}
+
+export async function blockSlot(id: string) {
+  prisma.slot.update({
+    where: { id: id },
+    data:{status:"BLOCKED"},
+  })
+}
