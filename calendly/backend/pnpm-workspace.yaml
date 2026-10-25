@@ -1,4 +1,6 @@
 allowBuilds:
   '@prisma/engines': true
+  '@swc/core': true
   esbuild: false
   prisma: true
+  protobufjs: true

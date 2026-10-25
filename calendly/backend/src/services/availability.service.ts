@@ -106,7 +106,9 @@ export async function getException(id: number, userId: number) {
   }
 
 
-export async function getExceptionToandFrom(userId: number, to: Date, from: Date) {
-  const exceptions = await availability.getExceptionByDateRange(userId, to, from);
+export async function getExceptionToandFrom(userId: number, from : Date, to: Date) {
+  console.log(`user id ${userId} to ${to} from ${from}`);
+  const exceptions = await availability.getExceptionByDateRange(userId, from, to);
+  console.log('exceptions : ', exceptions);
   return exceptions;
 }

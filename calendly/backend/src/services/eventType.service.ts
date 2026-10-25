@@ -3,6 +3,7 @@ import {  conflict, notFound, unauthorized } from "../utils/api-error.js";
 import { allEvents, create, remove, update, userExistsBySlug , allActiveEvents , getEvent, eventsBySlug} from "../repository/eventType.repository.js";
 import slug from "slug";
 import { UpdateUserDto } from "../dtos/user.dto.js";
+import { runSlotGenWorkflow } from "../temporal/client.js";
 
 // TODO  unique slug creation , throw error if slug is not url compatabile
 export async function createEvent(hostId: number, event: createEventTypeDTO) {
@@ -17,6 +18,7 @@ export async function createEvent(hostId: number, event: createEventTypeDTO) {
     throw conflict("could not able to create a slug for event type");
   }
   const newEventType = await create(hostId, { ...event, slug: newSlug });
+  await runSlotGenWorkflow({ hostId });
   return newEventType;
 }
 

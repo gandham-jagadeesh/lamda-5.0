@@ -12,7 +12,7 @@ interface window{
   endTime: DateTime
 }
 
-interface regenerateHostSlotsInfo {
+export interface regenerateHostSlotsInput {
   hostId: number,
   to?: string,
   from?: string
@@ -20,21 +20,25 @@ interface regenerateHostSlotsInfo {
 
 
 
-export async function regenerateHostSlots(slotInfo: regenerateHostSlotsInfo) {
-
+export async function regenerateHostSlots(slotInfo: regenerateHostSlotsInput) {
+  console.log(`[workflow ] started for host`,slotInfo.hostId);
   const host = await findById(slotInfo.hostId);
 //convert to and from date into luxon date format
   const from = slotInfo.from ? DateTime.fromISO(slotInfo.from, { zone: 'utc' }).startOf('day') : DateTime.now().startOf('day').toUTC();
  // need to add last date + for how many months we are generating slots put that as .env
   const to = slotInfo.to ? DateTime.fromISO(slotInfo.to, { zone: 'utc' }).endOf('day') : from.plus({ days: SLOT_GENERATION_DAYS }).toUTC();
-
+  console.log("[workflow] start Date", from);
+  console.log("[workflow] end Date", to);
     const [rules, bookedSlots, exceptions, eventTypes] = await Promise.all([
       getRules(slotInfo.hostId),
       FindBookedSlotsByHostInRange(slotInfo.hostId,from.toJSDate(),to.toJSDate()),
       getExceptionToandFrom(slotInfo.hostId,from.toJSDate(),to.toJSDate()),
       getAllActiveEvents(slotInfo.hostId)
     ]);
-
+  console.log(`rules : `, rules);
+  console.log(`booked slots: `, bookedSlots);
+  console.log(`exceptions`, exceptions);
+  console.log(`eventTypes`, eventTypes);
   //convert booked slots into timewindows (i.e luxon format)
   const occupiedSlots: window[] = bookedSlots.map((slot) => {
     return {
@@ -66,7 +70,7 @@ export async function regenerateHostSlots(slotInfo: regenerateHostSlotsInfo) {
       // check whether any booked slots overlapped with valid window slots
       // //we are checking slot.start > DateTime.utc() because we are filtering slots for future if slot is past we dont care about that slot
       const slots = splitIntoSlots(validWindows, event.durationMinutes, event.bufferBeforeMinutes, event.bufferAfterMinutes).filter((slot) => slot.start > DateTime.utc() && !overlapsBooked(slot, occupiedSlots, event.bufferBeforeMinutes, event.bufferAfterMinutes));
-
+      console.log("[slots to be inserted]", slots);
       for (let slot of slots) {
         const startAt = slot.start.toUTC().toJSDate();
         const endAt = slot.end.toUTC().toJSDate();
@@ -83,4 +87,5 @@ export async function regenerateHostSlots(slotInfo: regenerateHostSlotsInfo) {
       }
     }
   }
+  console.log(`[workflow ] ended`);
 }
