@@ -55,7 +55,7 @@ export async function findFutureSlotsByEventTypeInRange(eventTypeId: number, sta
       status: { in: ["AVAILABLE", "BLOCKED"] }
     }
   });
-}
+}``
 
 export async function blockSlot(id: string) {
   prisma.slot.update({

@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:19rc1
+    container_name: temporal-storage
+    environment:
+      - POSTGRES_USER=temporal
+      - POSTGRES_PASSWORD=temporal
+      - POSTGRES_DB=temporal
+    ports:
+      - "5433:5432"
+    volumes:
+        - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD","pg_isready","-U","temporal","-d","temporal"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  temporal:
+    image: temporalio/server
+    container_name: temporal-server
+    environment:
+      - DB=postgres12
+      - DBNAME=temporal
+      - DBPORT=5433
+    depends_on:
+      postgres:
+          condition: service_healthy
+  temporal-ui:
+    image: temporalio/ui:latest
+    container_name: temporal-ui
