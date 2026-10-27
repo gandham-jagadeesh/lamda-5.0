@@ -50,8 +50,9 @@ export async function regenerateHostSlots(slotInfo: regenerateHostSlotsInput) {
   // iterate over all the event types that are happening and with in that event iterate every date (30,60 days what ever user has suggested then with in that apply rules exceptions and bookedslots and filter from that and insert new slots and modify slots in db if a new change occur)
   for (let event of eventTypes) {
     const generatedValidSlotKeys = new Set<string>(); // valid slot keys
-    for (let cursor = from; cursor <= to; cursor.plus({ days: 1 })) {
+    for (let cursor = from; cursor <= to; cursor = cursor.plus({ days: 1 })) {
       const dateKey = cursor.toISODate();
+      console.log('[date]: ', dateKey);
       const exceptionsOnDate = exceptions.filter((ex) => DateTime.fromJSDate(ex.date, { zone: 'utc' }).toISO() === dateKey); // check whether the current date we had any exceptions or not
       const exceptionsWithTimeZone = exceptionsOnDate.map((ex) => ({
         type: ex.type,
@@ -59,7 +60,7 @@ export async function regenerateHostSlots(slotInfo: regenerateHostSlotsInput) {
         endTime: ex.endTime,
         timeZone: ex.timezone
       }));
-
+      console.log("[exceptions] applied",exceptionsWithTimeZone);
       // we got all the exceptions for that date itself we need to get all the rules for that date
       let validWindows: window[] = [];
       for (let rule of rules) {
@@ -67,10 +68,11 @@ export async function regenerateHostSlots(slotInfo: regenerateHostSlotsInput) {
       }
       //apply exceptions on those available windows
       validWindows = applyExceptionsForDate(cursor, validWindows, exceptionsWithTimeZone);
+
+      console.log("after applying exceptions", validWindows);
       // check whether any booked slots overlapped with valid window slots
       // //we are checking slot.start > DateTime.utc() because we are filtering slots for future if slot is past we dont care about that slot
       const slots = splitIntoSlots(validWindows, event.durationMinutes, event.bufferBeforeMinutes, event.bufferAfterMinutes).filter((slot) => slot.start > DateTime.utc() && !overlapsBooked(slot, occupiedSlots, event.bufferBeforeMinutes, event.bufferAfterMinutes));
-      console.log("[slots to be inserted]", slots);
       for (let slot of slots) {
         const startAt = slot.start.toUTC().toJSDate();
         const endAt = slot.end.toUTC().toJSDate();

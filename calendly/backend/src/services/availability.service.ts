@@ -2,6 +2,7 @@ import { createAvailabilityExceptionDTO, createAvailbilityRuleDTO, updateAvailbi
 import * as availability from "../repository/availability.repository.js";
 import { notFound, unauthorized } from "../utils/api-error.js";
 
+// what if user session is logged in and user tries to add a resource with user_id foriegn key instead of 500 error it must throw
 export async function createRule(userId: number, rule: createAvailbilityRuleDTO) {
   const createdRule = await availability.createRule(rule, userId);
   return createdRule;
@@ -107,7 +108,7 @@ export async function getException(id: number, userId: number) {
 
 
 export async function getExceptionToandFrom(userId: number, from : Date, to: Date) {
-  console.log(`user id ${userId} to ${to} from ${from}`);
+  console.log(`user id ${userId} from  ${to} to ${from}`);
   const exceptions = await availability.getExceptionByDateRange(userId, from, to);
   console.log('exceptions : ', exceptions);
   return exceptions;

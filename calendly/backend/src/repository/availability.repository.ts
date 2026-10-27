@@ -135,8 +135,8 @@ export async function getExceptionByDateRange(userId: number, fromDate: Date, to
     where: {
       user_id: userId,
       date: {
-        gte: fromDate,
-        lte: toDate
+        lte: toDate,
+        gte: fromDate
       }
     }
   });
