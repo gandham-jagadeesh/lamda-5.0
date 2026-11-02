@@ -5,6 +5,7 @@ import { noRouteHandler } from "./middlewares/path.handler.js";
 import { userRouter } from "./routers/user.router.js";
 import { eventTypeRouter } from "./routers/eventType.router.js"
 import { availabilityRouter, exceptionRouter} from "../src/routers/availbility.router.js"
+import { slotRouter } from "./routers/slot.router.js";
 
 const app: Express = express();
 
@@ -21,6 +22,7 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/eventType", eventTypeRouter);
 app.use("/api/v1/rule", availabilityRouter);
 app.use("/api/v1/exception", exceptionRouter);
+app.use("/api/v1/slots", slotRouter);
 
 app.use(noRouteHandler);
 app.use(errorHandler);

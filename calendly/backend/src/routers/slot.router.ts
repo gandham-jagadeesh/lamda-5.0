@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { getAllSlots } from "../controllers/slot.controller.js"
-const slotRouter = Router();
+import { requireUserId } from "../middlewares/require.user.id.js";
 
-slotRouter.use();
+const slotRouter: Router = Router();
 
-slotRouter.get("/:host_id/:eventTypeId/", getAllSlots);
+slotRouter.use(requireUserId);
+
+slotRouter.get("/:host_id/:eventTypeId", getAllSlots);
+
+export { slotRouter };
