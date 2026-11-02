@@ -1,4 +1,6 @@
 import { DateTime, Interval } from "luxon";
+import { getAllSlots  }  from "../repository/slot.repository.js"
+import { notFound } from "../utils/api-error.js";
 
 export interface TimeWindow{
   startTime: DateTime,
@@ -22,7 +24,7 @@ export function parseTimeOnDate(date: DateTime, time: string, timezone: string) 
 
 export function windowsForWeekDayRule(date: DateTime, weekday: number, startTime: string, endTime: string, timezone: string) {
   const localDate  = date.setZone(timezone).startOf('day');
-  const luxonWeek = weekday === 7 ? 0 : weekday;
+  const luxonWeek = weekday ===  0 ? 7 : weekday;
   if (localDate.weekday !== luxonWeek) return [];
   const start = parseTimeOnDate(localDate,startTime,timezone);
   const end = parseTimeOnDate(localDate, endTime, timezone);
@@ -52,6 +54,7 @@ return mergedResult;
 export function applyExceptionsForDate(cursor: DateTime, windows: TimeWindow[], exceptions: Exceptions[]) {
   // need to filter the exceptions to luxon time window so to filter
   // types of exceptions :  partial , full , add_available_window
+  console.log('[exception] : ');
   let validWindows:TimeWindow[] = [...windows];
   for (let ex of exceptions) {
     if (ex.type === "full") { return []; }
@@ -118,4 +121,15 @@ export function overlapsBooked(slot: Slot, bookedSlots: TimeWindow[], bufferBefo
     let bookedInterval = Interval.fromDateTimes(slot.startTime, slot.endTime);
     return interval.overlaps(bookedInterval);
   });
+}
+
+
+export async function  getSlotsByHostAndEvent(user_id: number, event_type_id: number, startDate: string, endDate: string) {
+
+  const searchSlot = { host_id: user_id, eventType_id: event_type_id, startAt: new Date(startDate), endDate: new Date(endDate) }
+  const availableSlots  = await getAllSlots(searchSlot.host_id,searchSlot.eventType_id,searchSlot.startAt,searchSlot.endDate);
+  if (availableSlots.length <= 0) {
+    throw notFound("slots Not Found");
+  }
+  return availableSlots;
 }

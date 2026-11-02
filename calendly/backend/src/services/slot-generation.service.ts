@@ -53,7 +53,12 @@ export async function regenerateHostSlots(slotInfo: regenerateHostSlotsInput) {
     for (let cursor = from; cursor <= to; cursor = cursor.plus({ days: 1 })) {
       const dateKey = cursor.toISODate();
       console.log('[date]: ', dateKey);
-      const exceptionsOnDate = exceptions.filter((ex) => DateTime.fromJSDate(ex.date, { zone: 'utc' }).toISO() === dateKey); // check whether the current date we had any exceptions or not
+      const exceptionsOnDate = exceptions.filter((ex) => {
+        const date = DateTime.fromJSDate(ex.date, { zone: 'utc' }).toISODate();
+        console.log('[luxon current Date] : ', dateKey);
+        console.log('[exception Date] : ',date);
+        return date === dateKey;
+      }); // check whether the current date we had any exceptions or not
       const exceptionsWithTimeZone = exceptionsOnDate.map((ex) => ({
         type: ex.type,
         startTime: ex.startTime,
@@ -69,7 +74,6 @@ export async function regenerateHostSlots(slotInfo: regenerateHostSlotsInput) {
       //apply exceptions on those available windows
       validWindows = applyExceptionsForDate(cursor, validWindows, exceptionsWithTimeZone);
 
-      console.log("after applying exceptions", validWindows);
       // check whether any booked slots overlapped with valid window slots
       // //we are checking slot.start > DateTime.utc() because we are filtering slots for future if slot is past we dont care about that slot
       const slots = splitIntoSlots(validWindows, event.durationMinutes, event.bufferBeforeMinutes, event.bufferAfterMinutes).filter((slot) => slot.start > DateTime.utc() && !overlapsBooked(slot, occupiedSlots, event.bufferBeforeMinutes, event.bufferAfterMinutes));
