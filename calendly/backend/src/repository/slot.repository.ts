@@ -113,3 +113,12 @@ export async function getAllSlots(host_id: number , eventType_id: number , start
   });
   return allValidSlots;
 }
+
+
+export async function UpdateSlotConfirmedToAvailable(id: string, dbclient?: DbClient) {
+  const prisma = getDbClient(dbclient);
+  return prisma.slot.update({
+    where: { id: id, status: "CONFIRMED" },
+    data: { status: "AVAILABLE" },
+  });
+}

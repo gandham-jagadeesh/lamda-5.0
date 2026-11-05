@@ -2,11 +2,16 @@ import { createBookingDTO } from "../dtos/booking.dto.js";
 import { prisma } from "../config/database.js";
 import type { slot } from "../../generated/prisma/client.js";
 import { badRequest, notFound } from "../utils/api-error.js";
-import { findSlotById, lockSlotForUpdate, markSlotBookedIfAvailable } from "../repository/slot.repository.js";
-import { createBooking } from "../repository/booking.repository.js";
+import { findSlotById, lockSlotForUpdate, markSlotBookedIfAvailable, UpdateSlotConfirmedToAvailable } from "../repository/slot.repository.js";
+import { createBooking, findBookingById , cancelBooking } from "../repository/booking.repository.js";
 import { markSlotBooked } from "../repository/slot.repository.js";
 import { sendEmailBookedWorkFlow } from "../temporal/workflows/slot-booked-mail-workflow.js";
 import { runSlotBookedConfirmWorkflow, runSlotGenWorkflow } from "../temporal/client.js";
+import  { bookingHostSearchDTO } from  "../dtos/booking.dto.js"
+import { DateTime } from "luxon";
+import { getHostBookingsinRange } from "../repository/booking.repository.js"
+import { unauthorized  } from "../utils/api-error.js"
+import { getDbClient } from "../repository/db-client.js";
 
 export function validateSlot(slot: slot | null) {
   if (!slot) {
@@ -63,4 +68,30 @@ export async function createBookingPessimistically(userId: number, createBooking
   });
   await sendEmailBookedWorkFlow(bookedSlot.id);
   return bookedSlot;
+}
+
+//only for logged in User
+export async function getHostBookedSlots(userId: number, bookingSearchInput: bookingHostSearchDTO = {}) {
+  const startAt = bookingSearchInput.startDate ? DateTime.fromISO(bookingSearchInput.startDate, { zone: "utc" }).startOf('day').toJSDate() : undefined;
+  const endAt = bookingSearchInput.endDate ? DateTime.fromISO(bookingSearchInput.endDate, { zone: "utc" }).endOf('day').toJSDate() : undefined;
+  const status = bookingSearchInput.status;
+  const bookings = await getHostBookingsinRange(userId, { status,startDate:startAt,endDate:endAt});
+  return bookings;
+}
+
+// need to wrap in a transaction if we cancel booking + update slot as well if all execute at once if not
+export async function cancelBookings(user_id: number, bookingId: number) {
+  const CancelBookingSlot = await prisma.$transaction(async (tx) => {
+    const booking = await findBookingById(bookingId);
+    if (!booking) {
+      notFound("booking not Found");
+    }
+    if (booking?.host_id !== user_id) {
+      unauthorized("not authorized to cancel the slot");
+    }
+    const cancelledbooking = await cancelBooking(bookingId, tx);
+    const slotreAvailable = await UpdateSlotConfirmedToAvailable(booking.slot_id, tx);
+
+  });
+
 }
