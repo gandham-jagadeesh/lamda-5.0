@@ -102,6 +102,14 @@ services:
     networks:
       - temporal-network
 
+  mail-server:
+    image: mailhog/mailhog:latest
+    container_name: mailhog
+    ports:
+      - "1025:1025" # SMTP server port
+      - "8025:8025" # ui port
+    networks:
+     - temporal-network
 
 networks:
   temporal-network:

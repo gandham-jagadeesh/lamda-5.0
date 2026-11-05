@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { requireUserId } from "../middlewares/require.user.id.js";
 import {createBooking } from "../controllers/booking.controller.js"
-const bookingRouter = Router();
+export const bookingRouter:Router = Router();
 
 bookingRouter.use(requireUserId);
 

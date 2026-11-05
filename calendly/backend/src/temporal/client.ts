@@ -31,3 +31,7 @@ async function startWorkFlow(workflowName: string, workflowId: string, args: unk
 export async function runSlotGenWorkflow(input: regenerateHostSlotsInput) {
   return startWorkFlow('genSlotsWorkflow', `regenerate-host-slots-${input.hostId}-${Date.now()}`, [input]);
 }
+
+export async function runSlotBookedConfirmWorkflow(input:number) {
+  return startWorkFlow('sendEmailBookedWorkFlow', `booking-confirmation-slot-${input}`, [input]);
+}

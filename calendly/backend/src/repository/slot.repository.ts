@@ -1,5 +1,5 @@
 import {prisma} from "../config/database.js";
-import { createSlotDTO, searchSlotDTO } from "../dtos/slot.dto.js"
+import { createSlotDTO } from "../dtos/slot.dto.js"
 import { DbClient, getDbClient } from "./db-client.js";
 
 
@@ -65,7 +65,7 @@ export async function markSlotBookedIfAvailable(id: string, db?: DbClient) {
       id: id
     },
     data: {
-      status: "BOOKED"
+      status: "BLOCKED"
     }
   });
   return slots;
@@ -97,7 +97,7 @@ export async function markSlotBooked(id: string,db?:DbClient) {
   const client = getDbClient(db);
   return client.slot.update({
     where: { id: id, status: "AVAILABLE" },
-    data: { status: "BOOKED" }
+    data: { status: "CONFIRMED" }
   });
 }
 

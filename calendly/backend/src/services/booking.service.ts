@@ -5,6 +5,8 @@ import { badRequest, notFound } from "../utils/api-error.js";
 import { findSlotById, lockSlotForUpdate, markSlotBookedIfAvailable } from "../repository/slot.repository.js";
 import { createBooking } from "../repository/booking.repository.js";
 import { markSlotBooked } from "../repository/slot.repository.js";
+import { sendEmailBookedWorkFlow } from "../temporal/workflows/slot-booked-mail-workflow.js";
+import { runSlotBookedConfirmWorkflow, runSlotGenWorkflow } from "../temporal/client.js";
 
 export function validateSlot(slot: slot | null) {
   if (!slot) {
@@ -20,7 +22,7 @@ export function validateSlot(slot: slot | null) {
 }
 
 export async function createBookingOptimistically(userId:number,createBookingDTO: createBookingDTO) {
-  const bookedSlot = prisma.$transaction(async (tx) => {
+  const bookedSlot = await prisma.$transaction(async (tx) => {
     const slot = validateSlot(await findSlotById(createBookingDTO.slot_id, tx));
     const validatedSlot = await markSlotBookedIfAvailable(slot.id);
     if (validatedSlot.count != 1) {
@@ -30,17 +32,19 @@ export async function createBookingOptimistically(userId:number,createBookingDTO
       slot_id: slot.id,
       eventType_id: slot.eventType_id,
       host_id: userId,
-      status: slot.status,
+      status: "CONFIRMED",
       inviteeEmail: createBookingDTO.inviteeEmail,
       inviteeName: createBookingDTO.inviteeName,
       inviteeNotes: createBookingDTO.inviteeNotes
     }, tx);
   });
+  await runSlotBookedConfirmWorkflow(bookedSlot.id);
+  await runSlotGenWorkflow({ hostId: bookedSlot.host_id });
   return bookedSlot;
 }
 
 export async function createBookingPessimistically(userId: number, createBookingDTO: createBookingDTO) {
-  const bookedSlot = prisma.$transaction(async (tx) => {
+  const bookedSlot = await prisma.$transaction(async (tx) => {
     const lockedSlots = await  lockSlotForUpdate(createBookingDTO.slot_id,tx);
     if (lockedSlots.length === 0) {
       throw notFound("slot not Found");
@@ -57,5 +61,6 @@ export async function createBookingPessimistically(userId: number, createBooking
       inviteeNotes: createBookingDTO.inviteeNotes
     },tx);
   });
+  await sendEmailBookedWorkFlow(bookedSlot.id);
   return bookedSlot;
 }
