@@ -35,3 +35,7 @@ export async function runSlotGenWorkflow(input: regenerateHostSlotsInput) {
 export async function runSlotBookedConfirmWorkflow(input:number) {
   return startWorkFlow('sendEmailBookedWorkFlow', `booking-confirmation-slot-${input}`, [input]);
 }
+
+export async function runSlotCancelledConfirmWorkflow(input:number) {
+  return startWorkFlow('sendEmailCancelledBookingWorkFlow', `booking-cancellation-${input}`, [input]);
+}

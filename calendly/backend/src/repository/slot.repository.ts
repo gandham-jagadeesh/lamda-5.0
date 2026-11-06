@@ -117,8 +117,19 @@ export async function getAllSlots(host_id: number , eventType_id: number , start
 
 export async function UpdateSlotConfirmedToAvailable(id: string, dbclient?: DbClient) {
   const prisma = getDbClient(dbclient);
-  return prisma.slot.update({
+  return prisma.slot.updateMany({
     where: { id: id, status: "CONFIRMED" },
     data: { status: "AVAILABLE" },
+  });
+}
+
+
+export async function getSlotByHostAndId(user_id: number, slot_id: string, dbclient?:DbClient) {
+  const prisma = getDbClient(dbclient);
+  return prisma.slot.findUnique({
+    where: {
+      host_id: user_id,
+      id: slot_id
+    }
   });
 }

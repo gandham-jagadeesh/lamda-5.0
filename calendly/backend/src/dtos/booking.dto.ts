@@ -11,7 +11,7 @@ export const bookingSchema = z.object({
   inviteeName: z.string().min(1),
 });
 
-const bookingsHostSearchSchema = z.object({
+export const bookingsHostSearchSchema = z.object({
   startDate: dateSchema.optional(),
   endDate: dateSchema.optional(),
   status:  z.enum(["CONFIRMED","CANCELLED","AVAILABLE"]).optional()

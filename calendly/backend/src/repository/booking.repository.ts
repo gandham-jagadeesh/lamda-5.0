@@ -1,6 +1,6 @@
 import { createBookingExtendedDTO } from "../dtos/booking.dto.js";
 import { DbClient, getDbClient } from "./db-client.js";
-import { prisma } from "../config/env.js";
+import { prisma } from "../config/database.js";
 
 interface bookingHostSearch{
   startDate?: Date,
@@ -48,11 +48,25 @@ export async function getHostBookingsinRange(userId: number, search: bookingHost
   });
   return bookings;
 }
-
-export async  function findBookingById(bookingId: number) {
+export async function findBookingById_(bookingId: number) {
   const booking = await prisma.booking.findFirst({
     where: {
-      id: bookingId
+      id: bookingId,
+    },
+    include: {
+      slot: true,
+      eventType: true,
+      host:true
+    }
+  });
+  return booking;
+}
+export async function findBookingById(userid: number, bookingId: number, dbclient: DbClient) {
+  const prisma = getDbClient(dbclient);
+  const booking = await prisma.booking.findFirst({
+    where: {
+      host_id: userid,
+      id: bookingId,
     },
     include: {
       slot: true,
@@ -66,11 +80,14 @@ export async  function findBookingById(bookingId: number) {
 // check whether logged in user booking slot is that
 export async function cancelBooking(bookingId: number, dbclient?: DbClient){
 const prisma = getDbClient(dbclient);
-  const bookingCancelled = await prisma.booking.findFirst({
+  const bookingCancelled = await prisma.booking.updateMany({
     where: {
       id: bookingId,
-      status: "CANCELLED"
+      status: "CONFIRMED"
     },
+    data: {
+      status: "CANCELLED"
+    }
   });
   return bookingCancelled;
 }

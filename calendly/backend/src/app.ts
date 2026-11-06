@@ -24,7 +24,7 @@ app.use("/api/v1/eventType", eventTypeRouter);
 app.use("/api/v1/rule", availabilityRouter);
 app.use("/api/v1/exception", exceptionRouter);
 app.use("/api/v1/slots", slotRouter);
-app.use("/api/v1/bookings",bookingRouter)
+app.use("/api/v1/bookings", bookingRouter);
 
 app.use(noRouteHandler);
 app.use(errorHandler);
