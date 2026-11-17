@@ -110,6 +110,16 @@ services:
       - "8025:8025" # ui port
     networks:
      - temporal-network
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+    - temporal-network
 
 networks:
   temporal-network:
@@ -117,3 +127,4 @@ networks:
 
 volumes:
   temporal-postgres-data:
+  redis-data:

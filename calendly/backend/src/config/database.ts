@@ -10,6 +10,7 @@ export const prisma = new PrismaClient({ adapter });
 export async function connectDatabase() {
   try {
     await prisma.$connect();
+    await prisma.$queryRaw`SELECT 1`
     console.log("[database] database connected sucessfully");
   }
   catch (err) {

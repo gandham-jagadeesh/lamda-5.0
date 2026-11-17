@@ -7,8 +7,9 @@ import { eventTypeRouter } from "./routers/eventType.router.js"
 import { availabilityRouter, exceptionRouter} from "../src/routers/availbility.router.js"
 import { slotRouter } from "./routers/slot.router.js";
 import { bookingRouter } from "./routers/booking.router.js";
-
+import { googleRouter } from "./routers/google-auth.router.js"
 const app: Express = express();
+
 
 app.use(express.json());
 
@@ -25,6 +26,7 @@ app.use("/api/v1/rule", availabilityRouter);
 app.use("/api/v1/exception", exceptionRouter);
 app.use("/api/v1/slots", slotRouter);
 app.use("/api/v1/bookings", bookingRouter);
+app.use("/api/v1/callback", googleRouter);
 
 app.use(noRouteHandler);
 app.use(errorHandler);

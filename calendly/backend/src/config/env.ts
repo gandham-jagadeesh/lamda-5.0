@@ -10,3 +10,7 @@ export const TEMPORAL_TASK_QUEUE = process.env.TEMPORAL_TASK_QUEUE || 'default-q
 export const SMTP_PORT = process.env.SMTP_PORT || 1025;
 export const SMTP_HOST = process.env.SMTP_HOST || 'localhost'
 export const EMAIL_FROM = process.env.EMAIL_FROM || "gandhamphotos@gmail.com";
+
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+export const GOOGLE_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
+export const GOOGLE_REDIRECT_URL = process.env.REDIRECT_URL || '';
