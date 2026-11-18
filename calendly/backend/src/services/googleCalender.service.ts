@@ -3,7 +3,7 @@ import { google,  type Auth,  } from "googleapis";
 import { GOOGLE_CLIENT_ID, GOOGLE_REDIRECT_URL, GOOGLE_SECRET } from "../config/env.js";
 import { randomBytes } from "node:crypto";
 import  redis  from "../config/redis.js";
-import { serviceNotAvailable } from "../utils/api-error.js";
+import { badRequest, serviceNotAvailable } from "../utils/api-error.js";
 
 export const SCOPES: string[] = [
   "email",
@@ -47,9 +47,32 @@ export async function createAuthURL(userid:number, oauth2client: Auth.OAuth2Clie
 
 
 
-export async function getAuthToken(code: string,state:string,error?:string) {
-// check whether state already existed if existed then create token and store it in redis and if possible store in postgres some kind of persisten and try failure modes
-// if it throws error invlaid grant send user bro you are already registeered and check token and refresh toke already existed or not
-// and let aouth2client atttach on referesh token handling and redis matching
+export async function getAuthToken(userid: number, code: string, state: string, error?: string) {
+  if (error) {
+    throw badRequest("oauth cancelled or invalid");
+  }
+  const rediskey = `google-state-auth-${state}`;
+  const result = await redis.getDel(rediskey);
+    if (!result) { // might be expired or user opening auth url twice double click or refresh may be
+      throw badRequest('google oauth expired or already verified');
+    }
+    const oauth2loggedInUser = JSON.parse(result);
+    if (oauth2loggedInUser.id !== userid) {
+      throw badRequest("invalid oauth state");
+    }
+    try {
+      const oauth2client = await createOauth2Client()
+      const response = await oauth2client.getToken(code);
+      await redis.set(`google-access-token-${userid}`, JSON.stringify(response.tokens)); // future cache aside pattern
+      return response.tokens;
+    }
+    catch (err) {
+      console.error("[Google Token Exchange Error]:", err);
+      throw badRequest('Failed to exchange Google authorization code');
+    }
+}
 
+
+export async function googleCalenderEvent(userid: number) {
+  // get the email and google calender event and then use that and booking id to  get the info and just edit the information
 }
