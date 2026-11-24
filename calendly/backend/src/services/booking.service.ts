@@ -12,6 +12,8 @@ import { DateTime } from "luxon";
 import { getHostBookingsinRange } from "../repository/booking.repository.js"
 import { unauthorized  } from "../utils/api-error.js"
 import { runSlotCancelledConfirmWorkflow } from "../temporal/client.js";
+
+
 export function validateSlot(slot: slot | null) {
   if (!slot) {
     throw notFound("slot Not Found");

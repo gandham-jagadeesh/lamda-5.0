@@ -13,6 +13,7 @@ model user {
   last_name             String?
   email                 String                  @unique
   password              String
+  timezone              String @default("UTC")
   slug                  String?
   created_at            DateTime                @default(now())
   updated_at            DateTime                @updatedAt
