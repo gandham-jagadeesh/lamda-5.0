@@ -44,6 +44,7 @@ export async function createBookingOptimistically(userId:number,createBookingDTO
       inviteeNotes: createBookingDTO.inviteeNotes
     }, tx);
   });
+  //need to create google event creation workflow need to be added
   await runSlotBookedConfirmWorkflow(bookedSlot.id);
   await runSlotGenWorkflow({ hostId: bookedSlot.host_id });
   return bookedSlot;

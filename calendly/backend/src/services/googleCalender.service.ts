@@ -141,6 +141,4 @@ export async function googleCalenderEvent(userId:number , bookingId:number) {
   catch (err) {
     throw badRequest("not able to proceed calender events");
   }
-
-
 }

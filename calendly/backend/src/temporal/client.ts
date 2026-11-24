@@ -4,6 +4,11 @@ import { regenerateHostSlotsInput } from "../services/slot-generation.service.js
 
 
 
+interface calenderEventInput{
+  bookingId: number,
+  userId: number
+}
+
 async function startWorkFlow(workflowName: string, workflowId: string, args: unknown[]) {
   if (!TEMPORAL_ENABLED) {
     console.warn('[Temporal] not enabled skipping workflow');
@@ -38,4 +43,9 @@ export async function runSlotBookedConfirmWorkflow(input:number) {
 
 export async function runSlotCancelledConfirmWorkflow(input:number) {
   return startWorkFlow('sendEmailCancelledBookingWorkFlow', `booking-cancellation-${input}`, [input]);
+}
+
+
+export async function runGoogleCalenderEventWorkflow(input: calenderEventInput) {
+  return startWorkFlow('googleCalenderEventCreationWorkFlow', `google-calender-event-${input.bookingId}`, [input]);
 }
